@@ -71,7 +71,28 @@ public class ITunes {
     }
     
     public void reviewSong(int code,int stars)throws IOException{
-        
+        songs.seek(0);
+        while(songs.getFilePointer()<songs.length()){
+            long x= songs.getFilePointer();
+            if(songs.readInt()==code){
+                songs.readUTF();
+                songs.readUTF();
+                songs.skipBytes(8);
+                int estrellas=songs.readInt();
+                int reviews=songs.readInt();
+                if(estrellas>=0 && estrellas <=5){
+                    songs.seek(x);
+                    songs.readUTF();
+                    songs.readUTF();
+                    songs.skipBytes(8);
+                    songs.writeInt(stars +estrellas);
+                    songs.writeInt(reviews+1);
+                }else{
+                    throw new IllegalArgumentException();
+                }
+            }
+                
+        }
         
     }
     
@@ -85,8 +106,21 @@ public class ITunes {
         
     }
     
-    public void infoSong(int codeSong){
-        
+    public void infoSong(int codeSong) throws IOException{
+        songs.seek(0);
+        while(songs.getFilePointer()< songs.length()){
+            if(songs.readInt()==codeSong){
+                String nombre=songs.readUTF();
+                String cantante =songs.readUTF();
+                double precio=songs.readInt();
+                int estrellas=songs.readInt();
+                int reviews=songs.readInt();
+                int totalEstrellas= estrellas*reviews;
+                int descargas=songs.readInt();
+                
+                System.out.println("Nombre: "+nombre+" Cantante: "+cantante+" precio: "+precio+" estrellas: "+estrellas+" reviews: "+reviews+" total de estrellas: "+totalEstrellas+" descargas: "+descargas);
+            }
+        }
         
     }
    
